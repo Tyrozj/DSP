@@ -1,0 +1,24 @@
+c language:
+int add_a_and_b(int a, int b) {
+   return a + b;
+}
+
+int main() {
+   return add_a_and_b(2, 3);
+}
+
+it's confront assembly language:
+_main
+push 3 #写入 ESP 寄存器
+push 2 #写入 ESP 寄存器
+call _add_a_and_b #调用函数
+add %esp,8 #3和2为整型，累计占用8字节，所以减去8
+ret
+
+_add_a_and_b:
+   push   %ebx
+   mov    %eax, [%esp+8] #将 ESP 寄存器里面的地址加上8个字节，得到一个新的地址，然后按照这个地址在 Stack 取出数据
+   mov    %ebx, [%esp+12] #将 ESP 寄存器的值加12个字节，再按照这个地址在 Stack 取出数据
+   add    %eax, %ebx #做加法
+   pop    %ebx #取出 Stack 最近一个写入的值
+   ret  #终止当前函数的执行，将运行权交还给上层函数。也就是，当前函数的帧将被回收。
